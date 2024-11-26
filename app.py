@@ -210,9 +210,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
         gr.ChatInterface(
             chatbot_config, # Función de configuración del chatbot
             theme=my_theme, # Tema personalizado para la interfaz
-            retry_btn=None, # Botón de reintentar desactivado
-            undo_btn=None, # Botón de deshacer desactivado
-            clear_btn="Limpiar 🗑️", # Botón de limpiar mensajes
             submit_btn="Enviar", # Botón de enviar mensaje
             autofocus=True, # Enfocar automáticamente el campo de entrada de texto
             fill_height=True, # Rellenar el espacio verticalmente
