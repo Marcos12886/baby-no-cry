@@ -3,7 +3,7 @@ La versión de Python utilizada es la 3.10.14, modelos entrenados con un gráfic
 
 Instalaciones:
 - pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-- pip install transformers[torch] gradio scikit-learn dotenv
+- pip install transformers[torch] gradio scikit-learn python-dotenv
 
 ## Estructura
 Funcionalidades:
