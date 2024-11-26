@@ -1,7 +1,6 @@
 ## Instalación
-La versión de Python utilizada es la 3.10.14, modelos entrenados con un gráfica de NVIDIA.
-
-Instalar con: pip install -r requirements.txt
+- La versión de Python utilizada es la 3.10.14, modelos entrenados con un gráfica de NVIDIA.
+- pip install -r requirements.txt
 
 ## Estructura
 Funcionalidades:
