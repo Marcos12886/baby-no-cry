@@ -9,7 +9,7 @@ Funcionalidades:
 - Chatbot: poder hablar con un llm sobre las preocupaciones con tu bebé
 
 Entrenar modelos:
-- Modelo Detector model.py --n detec
+- Modelo Detector: model.py --n detec
 - Modelo Predictor: model.py --n class
 
 Chatbot [app.py](app.py)
