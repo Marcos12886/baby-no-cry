@@ -7,7 +7,7 @@ import torchaudio
 from dotenv import load_dotenv
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler, Subset
 from huggingface_hub import upload_folder
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from collections import Counter
 from transformers import (
     Wav2Vec2FeatureExtractor, HubertConfig, HubertForSequenceClassification,
