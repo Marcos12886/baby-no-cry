@@ -1,9 +1,7 @@
 ## Instalación
 La versión de Python utilizada es la 3.10.14, modelos entrenados con un gráfica de NVIDIA.
 
-Instalaciones:
-- pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-- pip install transformers[torch] gradio scikit-learn python-dotenv
+Instalar con: pip install -r requirements.txt
 
 ## Estructura
 Funcionalidades:
@@ -23,4 +21,4 @@ Chatbot [app.py](app.py)
 
 Colaboradores:
 - Roberto Martín: creó varias funciones, entre ellas: función para filtrar por decibelios, filtrar por ruido blanco, ...
-- Felipe González: diseñó el logo y eligió la fuente y colores de la aplicación
+- Felipe González: diseñó el logo y eligió la fuente y colores de la aplicación.
