@@ -6,7 +6,6 @@ import torch
 import torchaudio
 from dotenv import load_dotenv
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler, Subset
-from huggingface_hub import upload_folder
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from collections import Counter
 from transformers import (
@@ -41,7 +40,7 @@ class AudioDataset(Dataset):
                     audio_path = os.path.join(label_path, file_name)
                     self.file_paths.append(audio_path)
                     self.labels.append(label_id)
-        # Submuestreamos la clase normal para el clasficador
+        # Submuestreamos la clase normal para el clasificador
         if undersample_normal and self.label2id:
             self.undersample_normal_class()
 
@@ -105,7 +104,7 @@ def is_white_noise(audio):
     """Comprueba si un audio es ruido blanco según su media y desviación estándar"""
     mean = torch.mean(audio)
     std = torch.std(audio)
-    return torch.abs(mean) < 0.001 and std < 0.01 # Definimos las condiciones para considerar ruido blanco
+    return torch.abs(mean) < 0.001 and std < 0.01
 
 def seed_everything():
     """Fijar semillas para reproducibilidad"""
