@@ -9,10 +9,10 @@ Funcionalidades:
 - Chatbot: poder hablar con un llm sobre las preocupaciones con tu bebé
 
 Entrenar modelos:
-- Modelo Detector: model.py --n detec
-- Modelo Predictor: model.py --n class
+- Detector: [model.py](model.py) --n detec
+- Predictor: [model.py](model.py) --n class
 
-Chatbot [app.py](app.py)
+- Chatbot [app.py](app.py)
 
 Colaboradores:
 - Roberto Martín: creó varias funciones, entre ellas: función para filtrar por decibelios, filtrar por ruido blanco, ...
