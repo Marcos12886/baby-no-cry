@@ -1,0 +1,5 @@
+distilhubert-mixed-data
+distilhubert-finetuned-cry-detector
+.env
+env-bebes
+__pycache__
