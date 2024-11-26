@@ -20,7 +20,7 @@ FEATURE_EXTRACTOR = Wav2Vec2FeatureExtractor.from_pretrained(MODEL) # Extracció
 seed = 123
 MAX_DURATION = 1.00 # Máxima duración de los audios
 SAMPLING_RATE = FEATURE_EXTRACTOR.sampling_rate # 16kHz
-config_file = "models_config.json" # Archivo con los argumentos de entrenamiento
+config_file = "config.json" # Archivo con los argumentos de entrenamiento
 batch_size = 1024 # Tamaño del batch para hacer el split solo 1 vez
 num_workers = 12 # Número de núcleos de CPU utilizados en la carga de datos
 

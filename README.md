@@ -15,5 +15,5 @@ Entrenar modelos:
 - Chatbot [app.py](app.py)
 
 Colaboradores:
-- Roberto Martín: creó varias funciones, entre ellas: función para filtrar por decibelios, filtrar por ruido blanco, ...
-- Felipe González: diseñó el logo y eligió la fuente y colores de la aplicación.
+- Roberto Martín. Creó varias funciones, entre ellas: función para filtrar por decibelios, filtrar por ruido blanco, ...
+- Felipe González. Eligió: el logo, la fuente y colores de la aplicación.
