@@ -8,13 +8,9 @@ Funcionalidades:
 - Monitor de bebés: identificar si tu bebé llora y por qué
 - Chatbot: poder hablar con un llm sobre las preocupaciones con tu bebé
 
-Flujo de archivos:
-1. Construir la estructura de los modelos y entrenarlos [model.py](model.py)
-2. Chatbot en el que grabar audio y conectar con llama 3 8B [app.py](app.py)
-
-Un modelo ([model.py](model.py)) entrenado con distintos datos:
-- Modelo DetectorPredictor.py --n detec
-- Modelo Predictor: python model.py --n class
+Entrenar modelos:
+- Modelo Detector model.py --n detec
+- Modelo Predictor: model.py --n class
 
 Chatbot [app.py](app.py)
 
