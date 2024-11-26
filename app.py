@@ -1,10 +1,10 @@
 import torch
 import torch.nn.functional as F # Importa la API funcional de torch, incluyendo softmax
 import gradio as gr # Gradio para crear interfaces web
-from dotenv import load_dotenv
 from transformers import LlamaForCausalLM
 from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
 import torchaudio # Librería para procesamiento de audio
+from dotenv import load_dotenv
 
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Verifica si hay GPU disponible, de lo contrario usa CPU
@@ -147,37 +147,37 @@ my_theme = gr.themes.Soft(
     )
 
 with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
-    with gr.Column(visible=True) as inicial:    
+    with gr.Column(visible=True) as inicial:
         gr.HTML(
             """
             <style>
             @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
             @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-            
+
             h1 {
                 font-family: 'Lobster', cursive;
                 font-size: 5em !important;
                 text-align: center;
                 margin: 0;
             }
-            
+
             .gr-button {
-                background-color: #4CAF50 !important; 
-                color: white !important; 
+                background-color: #4CAF50 !important;
+                color: white !important;
                 border: none;
-                padding: 25px 50px; 
+                padding: 25px 50px;
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
-                font-family: 'Lobster', cursive; 
-                font-size: 2em !important; 
+                font-family: 'Lobster', cursive;
+                font-size: 2em !important;
                 margin: 4px 2px;
                 cursor: pointer;
                 border-radius: 12px;
             }
-            
+
             .gr-button:hover {
-                background-color: #45a049; 
+                background-color: #45a049;
             }
             h2 {
                 font-family: 'Lobster', cursive;
