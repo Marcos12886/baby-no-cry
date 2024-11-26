@@ -1,13 +1,12 @@
 import torch
+import torchaudio # Librería para procesamiento de audio
 import torch.nn.functional as F # Importa la API funcional de torch, incluyendo softmax
 import gradio as gr # Gradio para crear interfaces web
-from transformers import LlamaForCausalLM
-from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
-import torchaudio # Librería para procesamiento de audio
 from dotenv import load_dotenv
+from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
 
 load_dotenv()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Verifica si hay GPU disponible, de lo contrario usa CPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, id2label_class = predict_params(
     model_path="distilhubert-finetuned-mixed-data", # Ruta al modelo para la predicción de clases de llanto
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
