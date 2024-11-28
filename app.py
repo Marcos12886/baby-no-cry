@@ -150,14 +150,12 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             <style>
             @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
             @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
             h1 {
                 font-family: 'Lobster', cursive;
                 font-size: 5em !important;
                 text-align: center;
                 margin: 0;
             }
-
             .gr-button {
                 background-color: #4CAF50 !important;
                 color: white !important;
@@ -172,7 +170,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
                 cursor: pointer;
                 border-radius: 12px;
             }
-
             .gr-button:hover {
                 background-color: #45a049;
             }
@@ -190,16 +187,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             <h1>baby-no-cry</h1>
             <h4 style='text-align: center; font-size: 1.5em'>El mejor aliado para el bienestar de tu bebé</h4>
             """
-        )
-        gr.Markdown(
-            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué es baby-no-cry?</h4>"
-            "<p style='text-align: left'>baby-no-cry es un proyecto llevado a cabo por un grupo de estudiantes interesados en el desarrollo de modelos de inteligencia artificial, enfocados específicamente en casos de uso relevantes para ayudar a cuidar a los más pequeños de la casa.</p>"
-            "<h4 style='text-align: left; font-size: 1.5em;'>Nuestra misión</h4>"
-            "<p style='text-align: left'>Sabemos que la paternidad puede suponer un gran desafío. Nuestra misión es brindarles a todos los padres unas herramientas de última tecnología que los ayuden a navegar esos primeros meses de vida tan cruciales en el desarrollo de sus pequeños.</p>"
-            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué ofrece baby-no-cry?</h4>"
-            "<p style='text-align: left'>Chatbot: Pregunta a nuestro asistente que te ayudará con cualquier duda que tengas sobre el cuidado de tu bebé.</p>"
-            "<p style='text-align: left'>Predictor: Con nuestro modelo de inteligencia artificial somos capaces de predecir por qué tu bebé está llorando.</p>"
-            "<p style='text-align: left'>Monitor: Nuestro monitor no es como otros que hay en el mercado, ya que es capaz de reconocer si un sonido es un llanto del bebé o no; y si está llorando, predice automáticamente la causa. Dándote la tranquilidad de saber siempre qué pasa con tu pequeño, ahorrándote tiempo y horas de sueño.</p>"
         )
         boton_inicial = gr.Button("¡Prueba nuestros modelos!")
     with gr.Column(visible=False) as chatbot: # Columna para la pestaña del chatbot
