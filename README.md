@@ -16,4 +16,4 @@ Entrenar modelos:
 
 Colaboradores:
 - Roberto Martín. Creó varias funciones, entre ellas: función para filtrar por decibelios, ...
-- Felipe González. Eligió: la fuente y colores de la aplicación.
+- Felipe González. Eligió: colores de la aplicación.

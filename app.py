@@ -4,7 +4,7 @@ import torch.nn.functional as F # Importa la API funcional de torch, incluyendo 
 import gradio as gr # Gradio para crear interfaces web
 from dotenv import load_dotenv
 from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
-
+#TODO: estaba quitando lo de los decibelios
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, id2label_class = predict_params(
@@ -17,7 +17,7 @@ model_mon, id2label_mon = predict_params(
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
     undersample_normal=False # No submuestrear datos
     )
-
+# TODO: mirar si se puede quitar el undersample de aqui
 def call(audiopath, model, dataset_path, undersample_normal=False):
     model.to(device) # Envía el modelo a la GPU (o CPU si no hay GPU disponible)
     model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
@@ -132,16 +132,16 @@ my_theme = gr.themes.Soft(
     neutral_hue="slate",
     text_size="sm",
     spacing_size="sm",
-    font=[gr.themes.GoogleFont('Nunito'), 'ui-sans-serif', 'system-ui', 'sans-serif'],
-    font_mono=[gr.themes.GoogleFont('Nunito'), 'ui-monospace', 'Consolas', 'monospace'],
-    ).set(
+    font=[gr.themes.GoogleFont('Bubblegum Sans'), 'ui-sans-serif', 'system-ui', 'sans-serif'],
+    font_mono=[gr.themes.GoogleFont('Bubblegum Sans'), 'ui-monospace', 'Consolas', 'monospace'],
+).set(
     body_background_fill='*neutral_50',
     body_text_color='*neutral_600',
     body_text_size='*text_sm',
     embed_radius='*radius_md',
     shadow_drop='*shadow_spread',
     shadow_spread='*button_shadow_active'
-    )
+)
 
 with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
     with gr.Column(visible=True) as inicial:
