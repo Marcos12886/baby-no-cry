@@ -25,12 +25,11 @@ num_workers = 12 # Número de núcleos de CPU utilizados en la carga de datos
 
 class AudioDataset(Dataset):
     """Dataset de audios"""
-    def __init__(self, dataset_path, label2id, filter_white_noise, undersample_normal):
+    def __init__(self, dataset_path, label2id, undersample_normal):
         """Inicializar dataset"""
         self.dataset_path = dataset_path
         self.label2id = label2id
         self.file_paths = []
-        self.filter_white_noise = filter_white_noise
         self.labels = []
         # Recorremos los directorios de etiquetas y asignamos sus archivos
         for label_dir, label_id in self.label2id.items():
@@ -100,12 +99,6 @@ class AudioDataset(Dataset):
         )
         return inputs.input_values.squeeze()
 
-def is_white_noise(audio):
-    """Comprueba si un audio es ruido blanco según su media y desviación estándar"""
-    mean = torch.mean(audio)
-    std = torch.std(audio)
-    return torch.abs(mean) < 0.001 and std < 0.01
-
 def seed_everything():
     """Fijar semillas para reproducibilidad"""
     torch.manual_seed(seed)
@@ -130,10 +123,10 @@ def compute_class_weights(labels):
     class_weights = {cls: total_samples / count for cls, count in class_counts.items()} # Calculamos los pesos
     return [class_weights[label] for label in labels] # Devolvemos los pesos correspondientes a las etiquetas
 
-def create_dataloader(dataset_path, filter_white_noise, undersample_normal, test_size=0.2, shuffle=True, pin_memory=True):
+def create_dataloader(dataset_path, undersample_normal, test_size=0.2, shuffle=True, pin_memory=True):
     """Hacer particiones de entrenamiento y validación"""
     label2id, id2label = build_label_mappings(dataset_path) # Construimos el mapeo de etiquetas
-    dataset = AudioDataset(dataset_path, label2id, filter_white_noise, undersample_normal) # Creamos el dataset
+    dataset = AudioDataset(dataset_path, label2id, undersample_normal) # Creamos el dataset
     dataset_size = len(dataset) # Obtenemos el tamaño del dataset
     indices = list(range(dataset_size))
     random.shuffle(indices) # Mezclamos los índices para dividir aleatoriamente
@@ -174,15 +167,15 @@ def load_model(model_path, id2label, num_labels):
     model.to(device)
     return model
 
-def train_params(dataset_path, filter_white_noise, undersample_normal):
+def train_params(dataset_path, undersample_normal):
     """Entrenar modelo"""
-    train_dataloader, test_dataloader, id2label = create_dataloader(dataset_path, filter_white_noise, undersample_normal)
+    train_dataloader, test_dataloader, id2label = create_dataloader(dataset_path, undersample_normal)
     model = load_model(MODEL, id2label, num_labels=len(id2label))
     return model, train_dataloader, test_dataloader, id2label
 
-def predict_params(dataset_path, model_path, filter_white_noise, undersample_normal):
+def predict_params(dataset_path, model_path, undersample_normal):
     """Predecir en app.py"""
-    _, _, id2label = create_dataloader(dataset_path, filter_white_noise, undersample_normal)
+    _, _, id2label = create_dataloader(dataset_path, undersample_normal)
     model = load_model(model_path, id2label, num_labels=len(id2label))
     return model, id2label
 
@@ -199,10 +192,10 @@ def compute_metrics(pred):
         'recall': recall,
         }
 
-def main(training_args, output_dir, dataset_path, filter_white_noise, undersample_normal):
+def main(training_args, output_dir, dataset_path, undersample_normal):
     """Entrenar modelo"""
     seed_everything()
-    model, train_dataloader, test_dataloader, _ = train_params(dataset_path, filter_white_noise, undersample_normal)
+    model, train_dataloader, test_dataloader, _ = train_params(dataset_path, undersample_normal)
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -239,10 +232,8 @@ if __name__ == "__main__":
     dataset_path = config["dataset_path"]
     # Ajustamos los parámetros según el modelo elegido
     if args.n == "detec":
-        filter_white_noise = False
         undersample_normal = False
     elif args.n == "class":
-        filter_white_noise = True
         undersample_normal = True
     # Iniciamos el proceso de entrenamiento
-    main(training_args, output_dir, dataset_path, filter_white_noise, undersample_normal)
+    main(training_args, output_dir, dataset_path, undersample_normal)
