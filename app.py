@@ -10,20 +10,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, id2label_class = predict_params(
     model_path="distilhubert-finetuned-mixed-data", # Ruta al modelo para la predicción de clases de llanto
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
-    filter_white_noise=True, # Indica que se filtrará el ruido blanco
     undersample_normal=True # Activa el submuestreo para equilibrar clases
     )
 model_mon, id2label_mon = predict_params(
     model_path="distilhubert-finetuned-cry-detector", # Ruta al modelo detector de llanto
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
-    filter_white_noise=False, # No filtrar ruido blanco en este modelo
     undersample_normal=False # No submuestrear datos
     )
 
-def call(audiopath, model, dataset_path, filter_white_noise, undersample_normal=False):
+def call(audiopath, model, dataset_path, undersample_normal=False):
     model.to(device) # Envía el modelo a la GPU (o CPU si no hay GPU disponible)
     model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
-    audio_dataset = AudioDataset(dataset_path, {}, filter_white_noise, undersample_normal) # Carga el dataset de audio con parámetros específicos
+    audio_dataset = AudioDataset(dataset_path, {}, undersample_normal) # Carga el dataset de audio con parámetros específicos
     processed_audio = audio_dataset.preprocess_audio(audiopath) # Preprocesa el audio según la configuración del dataset
     inputs = {"input_values": processed_audio.to(device).unsqueeze(0)} # Prepara los datos para el modelo (envía a GPU y ajusta dimensiones)
     with torch.no_grad(): # Desactiva el cálculo del gradiente para ahorrar memoria
@@ -33,7 +31,7 @@ def call(audiopath, model, dataset_path, filter_white_noise, undersample_normal=
 
 def predict(audio_path_pred):
     with torch.no_grad(): # Desactiva gradientes para la inferencia
-        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", filter_white_noise=True, undersample_normal=False) # Llama a la función de inferencia
+        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False) # Llama a la función de inferencia
         predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtiene la clase predicha a partir de los logits
         label_class = id2label_class[predicted_class_ids_class] # Convierte el ID de clase en una etiqueta de texto
         label_mapping = {0: 'Cansancio/Incomodidad', 1: 'Dolor', 2: 'Hambre', 3: 'Problemas para respirar'} # Mapea las etiquetas
@@ -46,7 +44,7 @@ def predict(audio_path_pred):
 
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
-        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", filter_white_noise=False, undersample_normal=False) # Llama al modelo de detección de llanto
+        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", undersample_normal=False) # Llama al modelo de detección de llanto
         probabilities = F.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtiene las probabilidades asociadas al llanto
         avg_crying_probability = crying_probabilities.mean()*100 # Calcula la probabilidad promedio de llanto
@@ -189,16 +187,16 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
                 text-align: center;
             }
             </style>
-            <h1>Iremia</h1>
+            <h1>baby-no-cry</h1>
             <h4 style='text-align: center; font-size: 1.5em'>El mejor aliado para el bienestar de tu bebé</h4>
             """
         )
         gr.Markdown(
-            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué es Iremia?</h4>"
-            "<p style='text-align: left'>Iremia es un proyecto llevado a cabo por un grupo de estudiantes interesados en el desarrollo de modelos de inteligencia artificial, enfocados específicamente en casos de uso relevantes para ayudar a cuidar a los más pequeños de la casa.</p>"
+            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué es baby-no-cry?</h4>"
+            "<p style='text-align: left'>baby-no-cry es un proyecto llevado a cabo por un grupo de estudiantes interesados en el desarrollo de modelos de inteligencia artificial, enfocados específicamente en casos de uso relevantes para ayudar a cuidar a los más pequeños de la casa.</p>"
             "<h4 style='text-align: left; font-size: 1.5em;'>Nuestra misión</h4>"
             "<p style='text-align: left'>Sabemos que la paternidad puede suponer un gran desafío. Nuestra misión es brindarles a todos los padres unas herramientas de última tecnología que los ayuden a navegar esos primeros meses de vida tan cruciales en el desarrollo de sus pequeños.</p>"
-            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué ofrece Iremia?</h4>"
+            "<h4 style='text-align: left; font-size: 1.5em;'>¿Qué ofrece baby-no-cry?</h4>"
             "<p style='text-align: left'>Chatbot: Pregunta a nuestro asistente que te ayudará con cualquier duda que tengas sobre el cuidado de tu bebé.</p>"
             "<p style='text-align: left'>Predictor: Con nuestro modelo de inteligencia artificial somos capaces de predecir por qué tu bebé está llorando.</p>"
             "<p style='text-align: left'>Monitor: Nuestro monitor no es como otros que hay en el mercado, ya que es capaz de reconocer si un sonido es un llanto del bebé o no; y si está llorando, predice automáticamente la causa. Dándote la tranquilidad de saber siempre qué pasa con tu pequeño, ahorrándote tiempo y horas de sueño.</p>"
