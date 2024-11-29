@@ -127,16 +127,15 @@ def display_prediction_stream(audio):
     return display_prediction(audio, predict_stream) # Envuelve la función de predicción "predict_stream" en la función "display_prediction"
 
 my_theme = gr.themes.Soft(
-    primary_hue="emerald",
-    secondary_hue="green",
+    primary_hue="lime",  # Light purple for a calming effect
     neutral_hue="slate",
     text_size="sm",
     spacing_size="sm",
     font=[gr.themes.GoogleFont('Bubblegum Sans'), 'ui-sans-serif', 'system-ui', 'sans-serif'],
     font_mono=[gr.themes.GoogleFont('Bubblegum Sans'), 'ui-monospace', 'Consolas', 'monospace'],
 ).set(
-    body_background_fill='*neutral_50',
-    body_text_color='*neutral_600',
+    body_background_fill='*neutral_100',  # Lighter background
+    body_text_color='*neutral_700',  # Slightly darker text for better readability
     body_text_size='*text_sm',
     embed_radius='*radius_md',
     shadow_drop='*shadow_spread',
@@ -144,52 +143,7 @@ my_theme = gr.themes.Soft(
 )
 
 with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
-    with gr.Column(visible=True) as inicial:
-        gr.HTML(
-            """
-            <style>
-            @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-            @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-            h1 {
-                font-family: 'Lobster', cursive;
-                font-size: 5em !important;
-                text-align: center;
-                margin: 0;
-            }
-            .gr-button {
-                background-color: #4CAF50 !important;
-                color: white !important;
-                border: none;
-                padding: 25px 50px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-family: 'Lobster', cursive;
-                font-size: 2em !important;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 12px;
-            }
-            .gr-button:hover {
-                background-color: #45a049;
-            }
-            h2 {
-                font-family: 'Lobster', cursive;
-                font-size: 3em !important;
-                text-align: center;
-                margin: 0;
-            }
-            p.slogan, h4, p, h3 {
-                font-family: 'Roboto', sans-serif;
-                text-align: center;
-            }
-            </style>
-            <h1>baby-no-cry</h1>
-            <h4 style='text-align: center; font-size: 1.5em'>El mejor aliado para el bienestar de tu bebé</h4>
-            """
-        )
-        boton_inicial = gr.Button("¡Prueba nuestros modelos!")
-    with gr.Column(visible=False) as chatbot: # Columna para la pestaña del chatbot
+    with gr.Column(visible=True) as chatbot: # Columna para la pestaña del chatbot
         gr.Markdown("<h2>Asistente</h2>") # Título de la pestaña del chatbot
         gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Pregunta a nuestro asistente cualquier duda que tengas sobre el cuidado de tu bebé</h4>")  # Descripción de la pestaña del chatbot
         gr.ChatInterface(
@@ -206,7 +160,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             with gr.Column(): # Columna para el botón del monitor
                 gr.Markdown("<h2>Monitor</h2>") # Título de la pestaña del chatbot
                 boton_monitor = gr.Button("Probar monitor") # Botón para cambiar a la pestaña del monitor
-        boton_volver_inicio = gr.Button("Volver al inicio") # Botón para volver a la pestaña inicial
     with gr.Column(visible=False) as pag_predictor: # Columna para la pestaña del predictor
         gr.Markdown("<h2>Predictor</h2>") # Título de la pestaña del predictor
         gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Descubre por qué tu bebé está llorando</h4>") # Descripción de la pestaña del predictor
@@ -251,8 +204,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             outputs=gr.HTML() # Salida para mostrar la predicción en tiempo real
         )
         volver.click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Botón para volver a la pestaña del chatbot
-    boton_inicial.click(cambiar_pestaña, outputs=[inicial, chatbot]) # Botón para cambiar a la pestaña inicial
-    boton_volver_inicio.click(cambiar_pestaña, outputs=[chatbot, inicial]) # Botón para volver a la pestaña inicial desde el chatbot
     boton_predictor.click(cambiar_pestaña, outputs=[chatbot, pag_predictor]) # Botón para cambiar a la pestaña del predictor
     boton_monitor.click(cambiar_pestaña, outputs=[chatbot, pag_monitor]) # Botón para cambiar a la pestaña del monitor
 demo.launch() # Lanzar la interfaz gráfica
