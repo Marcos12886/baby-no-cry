@@ -4,7 +4,7 @@ import torch.nn.functional as F # Importa la API funcional de torch, incluyendo 
 import gradio as gr # Gradio para crear interfaces web
 from dotenv import load_dotenv
 from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
-#TODO: estaba quitando lo de los decibelios
+
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, id2label_class = predict_params(
@@ -53,41 +53,6 @@ def predict_stream(audio_path_stream):
             return f"Está llorando por: {label_class}" # Retorna el resultado indicando por qué llora
         else:
             return "No está llorando" # Si la probabilidad es mayor, indica que no está llorando
-
-def decibelios(audio_path_stream):
-    waveform, _ = torchaudio.load(audio_path_stream) # Carga el audio y su forma de onda
-    rms = torch.sqrt(torch.mean(torch.square(waveform))) # Calcula el valor RMS del audio
-    db_level = 20 * torch.log10(rms + 1e-6).item() # Convierte el RMS en decibelios (añade un pequeño valor para evitar log(0))
-    min_db = -80 # Nivel mínimo de decibelios esperado
-    max_db = 0 # Nivel máximo de decibelios esperado
-    scaled_db_level = (db_level - min_db) / (max_db - min_db) # Escala el nivel de decibelios a un rango entre 0 y 1
-    normalized_db_level = scaled_db_level * 100 # Escala el nivel de decibelios a un porcentaje
-    return normalized_db_level # Retorna el nivel de decibelios normalizado
-
-def mostrar_decibelios(audio_path_stream, visual_threshold):
-    db_level = decibelios(audio_path_stream)# Obtiene el nivel de decibelios del audio
-    if db_level > visual_threshold: # Si el nivel de decibelios supera el umbral visual
-        status = "Prediciendo..." # Cambia el estado a "Prediciendo"
-    else:
-        status = "Esperando..." # Si no supera el umbral, indica que está "Esperando"
-    return f"""
-        <div style='text-align: center; font-size: 1.5em'>
-            <span>{status}</span>
-            <span style='display: inline-block; min-width: 120px;'>Decibelios: {db_level:.2f}</span>
-        </div>
-    """ # Retorna una cadena HTML con el estado y el nivel de decibelios
-
-def predict_stream_decib(audio_path_stream, visual_threshold):
-    db_level = decibelios(audio_path_stream) # Calcula el nivel de decibelios
-    if db_level > visual_threshold: # Si supera el umbral, hace una predicción
-        prediction = display_prediction_stream(audio_path_stream) # Llama a la función de predicción
-    else:
-        prediction = "" # Si no supera el umbral, no muestra predicción
-    return f"""
-        <div style='text-align: center; font-size: 1.5em; min-height: 2em;'>
-            <span style='display: inline-block; min-width: 300px;'>{prediction}</span>
-        </div>
-    """ # Retorna el resultado o nada si no supera el umbral
 
 def chatbot_config(message, history: list[tuple[str, str]]):
     system_message = "You are a Chatbot specialized in baby health and care." # Mensaje inicial del chatbot
@@ -185,22 +150,10 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             type="filepath", # Tipo de entrada de audio (archivo)
             streaming=True # Habilitar la transmisión de audio en tiempo real
         )
-        threshold_db = gr.Slider(
-            minimum=0, # Valor mínimo del umbral de ruido
-            maximum=120, # Valor máximo del umbral de ruido
-            step=1, # Paso del umbral de ruido
-            value=20, # Valor inicial del umbral de ruido
-            label="Umbral de ruido para activar la predicción:" # Etiqueta del control deslizante del umbral de ruido
-        )
         volver = gr.Button("Volver") # Botón para volver a la pestaña del chatbot
         audio_stream.stream(
-            mostrar_decibelios, # Función para mostrar el nivel de decibelios
-            inputs=[audio_stream, threshold_db], # Entradas para la función de mostrar decibelios
-            outputs=gr.HTML() # Salida para mostrar el nivel de decibelios
-        )
-        audio_stream.stream(
-            predict_stream_decib, # Función para realizar la predicción en tiempo real
-            inputs=[audio_stream, threshold_db], # Entradas para la función de predicción en tiempo real
+            display_prediction_stream, # Función para realizar la predicción en tiempo real
+            inputs=audio_stream, # Entradas para la función de predicción en tiempo real
             outputs=gr.HTML() # Salida para mostrar la predicción en tiempo real
         )
         volver.click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Botón para volver a la pestaña del chatbot

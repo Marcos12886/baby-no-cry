@@ -13,6 +13,3 @@ Entrenar modelos:
 - Predictor: [model.py](model.py) --n class
 
 - Chatbot: [app.py](app.py)
-
-Colaboradores:
-- Roberto Martín. Creó varias funciones, entre ellas: función para filtrar por decibelios, ...
