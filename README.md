@@ -11,5 +11,6 @@ Funcionalidades:
 Entrenar modelos:
 - Detector: [model.py](model.py) --n detec
 - Predictor: [model.py](model.py) --n class
-
 - Chatbot: [app.py](app.py)
+
+Parámetros de entrenamiento: [config.json](config.json)
