@@ -15,6 +15,7 @@ model_mon, id2label_mon = predict_params(
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
     undersample_normal=False # No submuestrear datos
     )
+
 def call(audiopath, model, dataset_path, undersample_normal=False):
     model.to(device) # Envía el modelo a la GPU (o CPU si no hay GPU disponible)
     model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
@@ -37,7 +38,7 @@ def predict(audio_path_pred):
         <div style='text-align: center; font-size: 1.5em'>
             <span style='display: inline-block; min-width: 300px;'>{label_class}</span>
         </div>
-    """ # Retorna el resultado formateado para mostrar en la interfaz
+    """
 
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
@@ -49,7 +50,7 @@ def predict_stream(audio_path_stream):
             label_class = predict(audio_path_stream) # Llama a la predicción para determinar la razón del llanto
             return f"Está llorando por: {label_class}" # Retorna el resultado indicando por qué llora
         else:
-            return "No está llorando" # Si la probabilidad es mayor, indica que no está llorando
+            return "No está llorando"
 
 def chatbot_config(history, type='messages'):
     system_message = "You are a Chatbot specialized in baby health and care." # Mensaje inicial del chatbot
@@ -77,16 +78,6 @@ def chatbot_config(history, type='messages'):
 
 def cambiar_pestaña():
     return gr.update(visible=False), gr.update(visible=True) # Esta función cambia la visibilidad de las pestañas en la interfaz
-
-def display_prediction(audio, prediction_func):
-    prediction = prediction_func(audio) # Llama a la función de predicción para obtener el resultado
-    return f"<h3 style='text-align: center; font-size: 1.5em;'>{prediction}</h3>" # Retorna el resultado formateado en HTML
-
-def display_prediction_wrapper(audio):
-    return display_prediction(audio, predict) # Envuelve la función de predicción "predict" en la función "display_prediction"
-
-def display_prediction_stream(audio):
-    return display_prediction(audio, predict_stream)
 
 my_theme = gr.themes.Soft(
     primary_hue="lime",  # Light purple for a calming effect
@@ -129,7 +120,8 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
     with gr.Column(visible=False) as pag_predictor: # Columna para la pestaña del predictor
         gr.Markdown("<h2>Predictor</h2>") # Título de la pestaña del predictor
         gr.Markdown(
-            "<h4 style='text-align: center; font-size: 1.5em'>"
+            "<h4 style='text-align: center;"
+            "font-size: 1.5em'>"
             "Descubre por qué tu bebé está llorando</h4>"
         )
         audio_input = gr.Audio(
@@ -140,7 +132,7 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
         )
         prediction_output = gr.Markdown() # Salida para mostrar la predicción
         gr.Button("¿Por qué llora?").click(
-            display_prediction_wrapper, # Función de predicción para el botón
+            predict, # Función de predicción para el botón
             inputs=audio_input, # Entrada de audio para la función de predicción
             outputs=gr.Markdown() # Salida para mostrar la predicción
         )
@@ -148,7 +140,8 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
     with gr.Column(visible=False) as pag_monitor: # Columna para la pestaña del monitor
         gr.Markdown("<h2>Monitor</h2>") # Título de la pestaña del monitor
         gr.Markdown(
-            "<h4 style='text-align: center; font-size: 1.5em'>"
+            "<h4 style='text-align: center;"
+            "font-size: 1.5em'>"
             "Detecta en tiempo real si tu bebé está llorando y por qué</h4>"
         )
         audio_stream = gr.Audio(
@@ -159,7 +152,7 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
         )
         volver = gr.Button("Volver") # Botón para volver a la pestaña del chatbot
         audio_stream.stream(
-            display_prediction_stream, # Función para realizar la predicción en tiempo real
+            predict_stream, # Función para realizar la predicción en tiempo real
             inputs=audio_stream, # Entradas para la función de predicción en tiempo real
             outputs=gr.HTML() # Salida para mostrar la predicción en tiempo real
         )
