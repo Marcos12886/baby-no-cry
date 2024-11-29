@@ -31,7 +31,7 @@ def call(audiopath, model, dataset_path, undersample_normal=False):
 
 def predict(audio_path_pred):
     with torch.no_grad(): # Desactiva gradientes para la inferencia
-        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False) # Llama a la función de inferencia
+        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False)
         predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtiene la clase predicha a partir de los logits
         label_class = id2label_class[predicted_class_ids_class] # Convierte el ID de clase en una etiqueta de texto
         label_mapping = {0: 'Cansancio/Incomodidad', 1: 'Dolor', 2: 'Hambre', 3: 'Problemas para respirar'} # Mapea las etiquetas
@@ -110,7 +110,11 @@ my_theme = gr.themes.Soft(
 with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
     with gr.Column(visible=True) as chatbot: # Columna para la pestaña del chatbot
         gr.Markdown("<h2>Asistente</h2>") # Título de la pestaña del chatbot
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Pregunta a nuestro asistente cualquier duda que tengas sobre el cuidado de tu bebé</h4>")
+        gr.Markdown(
+            "<h4 style='text-align: center;"
+            "font-size: 1.5em'>"
+            "Pregunta a nuestro asistente cualquier duda que tengas sobre el cuidado de tu bebé</h4>"
+        )
         gr.ChatInterface(
             chatbot_config, # Función de configuración del chatbot
             theme=my_theme, # Tema personalizado para la interfaz
@@ -127,7 +131,10 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
                 boton_monitor = gr.Button("Probar monitor") # Botón para cambiar a la pestaña del monitor
     with gr.Column(visible=False) as pag_predictor: # Columna para la pestaña del predictor
         gr.Markdown("<h2>Predictor</h2>") # Título de la pestaña del predictor
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Descubre por qué tu bebé está llorando</h4>")
+        gr.Markdown(
+            "<h4 style='text-align: center; font-size: 1.5em'>"
+            "Descubre por qué tu bebé está llorando</h4>"
+        )
         audio_input = gr.Audio(
             min_length=1.0, # Duración mínima del audio requerida
             format="wav", # Formato de audio admitido
@@ -143,7 +150,10 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
         gr.Button("Volver").click(cambiar_pestaña, outputs=[pag_predictor, chatbot]) # Botón para volver a la pestaña del chatbot
     with gr.Column(visible=False) as pag_monitor: # Columna para la pestaña del monitor
         gr.Markdown("<h2>Monitor</h2>") # Título de la pestaña del monitor
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Detecta en tiempo real si tu bebé está llorando y por qué</h4>")
+        gr.Markdown(
+            "<h4 style='text-align: center; font-size: 1.5em'>"
+            "Detecta en tiempo real si tu bebé está llorando y por qué</h4>"
+        )
         audio_stream = gr.Audio(
             format="wav", # Formato de audio admitido
             label="Baby recorder", # Etiqueta del campo de entrada de audio
