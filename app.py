@@ -17,8 +17,8 @@ model_mon, id2label_mon = predict_params(
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
     undersample_normal=False # No submuestrear datos
     )
-# TODO: mirar si se puede quitar el undersample de aqui
-def call(audiopath, model, dataset_path, undersample_normal=False):
+
+def call(audiopath, model, dataset_path):
     model.to(device) # Envía el modelo a la GPU (o CPU si no hay GPU disponible)
     model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
     audio_dataset = AudioDataset(dataset_path, {}, undersample_normal) # Carga el dataset de audio con parámetros específicos
@@ -31,7 +31,7 @@ def call(audiopath, model, dataset_path, undersample_normal=False):
 
 def predict(audio_path_pred):
     with torch.no_grad(): # Desactiva gradientes para la inferencia
-        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False)
+        logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data")
         predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtiene la clase predicha a partir de los logits
         label_class = id2label_class[predicted_class_ids_class] # Convierte el ID de clase en una etiqueta de texto
         label_mapping = {0: 'Cansancio/Incomodidad', 1: 'Dolor', 2: 'Hambre', 3: 'Problemas para respirar'} # Mapea las etiquetas
@@ -44,7 +44,7 @@ def predict(audio_path_pred):
 
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
-        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", undersample_normal=False)
+        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection")
         probabilities = F.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtiene las probabilidades asociadas al llanto
         avg_crying_probability = crying_probabilities.mean()*100 # Calcula la probabilidad promedio de llanto
