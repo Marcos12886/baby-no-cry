@@ -6,7 +6,7 @@
 Funcionalidades:
 - Clasificador de llantos: conocer por qué llora tu bebé
 - Monitor de bebés: identificar si tu bebé está llorando y por qué
-- Chatbot: poder hablar con un LLM sobre las preocupaciones con tu bebé
+- Chatbot: poder hablar con un LLM sobre las preocupaciones de tu bebé
 
 Entrenar modelos:
 - Detector: [model.py](model.py) --n detec
