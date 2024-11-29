@@ -23,7 +23,7 @@ def call(audiopath, model, dataset_path, undersample_normal=False):
     model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
     audio_dataset = AudioDataset(dataset_path, {}, undersample_normal) # Carga el dataset de audio con parámetros específicos
     processed_audio = audio_dataset.preprocess_audio(audiopath) # Preprocesa el audio según la configuración del dataset
-    inputs = {"input_values": processed_audio.to(device).unsqueeze(0)} # Prepara los datos para el modelo (envía a GPU y ajusta dimensiones)
+    inputs = {"input_values": processed_audio.to(device).unsqueeze(0)}
     with torch.no_grad(): # Desactiva el cálculo del gradiente para ahorrar memoria
         outputs = model(**inputs) # Realiza la inferencia con el modelo
         logits = outputs.logits # Obtiene las predicciones del modelo
@@ -44,7 +44,7 @@ def predict(audio_path_pred):
 
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
-        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", undersample_normal=False) # Llama al modelo de detección de llanto
+        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", undersample_normal=False)
         probabilities = F.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtiene las probabilidades asociadas al llanto
         avg_crying_probability = crying_probabilities.mean()*100 # Calcula la probabilidad promedio de llanto
@@ -54,7 +54,7 @@ def predict_stream(audio_path_stream):
         else:
             return "No está llorando" # Si la probabilidad es mayor, indica que no está llorando
 
-def chatbot_config(message, history: list[tuple[str, str]]):
+def chatbot_config(history, type='messages'):
     system_message = "You are a Chatbot specialized in baby health and care." # Mensaje inicial del chatbot
     max_tokens = 512 # Máximo de tokens para la respuesta
     temperature = 0.5 # Controla la aleatoriedad de las respuestas
@@ -89,7 +89,7 @@ def display_prediction_wrapper(audio):
     return display_prediction(audio, predict) # Envuelve la función de predicción "predict" en la función "display_prediction"
 
 def display_prediction_stream(audio):
-    return display_prediction(audio, predict_stream) # Envuelve la función de predicción "predict_stream" en la función "display_prediction"
+    return display_prediction(audio, predict_stream)
 
 my_theme = gr.themes.Soft(
     primary_hue="lime",  # Light purple for a calming effect
@@ -110,7 +110,7 @@ my_theme = gr.themes.Soft(
 with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
     with gr.Column(visible=True) as chatbot: # Columna para la pestaña del chatbot
         gr.Markdown("<h2>Asistente</h2>") # Título de la pestaña del chatbot
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Pregunta a nuestro asistente cualquier duda que tengas sobre el cuidado de tu bebé</h4>")  # Descripción de la pestaña del chatbot
+        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Pregunta a nuestro asistente cualquier duda que tengas sobre el cuidado de tu bebé</h4>")
         gr.ChatInterface(
             chatbot_config, # Función de configuración del chatbot
             theme=my_theme, # Tema personalizado para la interfaz
@@ -127,7 +127,7 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
                 boton_monitor = gr.Button("Probar monitor") # Botón para cambiar a la pestaña del monitor
     with gr.Column(visible=False) as pag_predictor: # Columna para la pestaña del predictor
         gr.Markdown("<h2>Predictor</h2>") # Título de la pestaña del predictor
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Descubre por qué tu bebé está llorando</h4>") # Descripción de la pestaña del predictor
+        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Descubre por qué tu bebé está llorando</h4>")
         audio_input = gr.Audio(
             min_length=1.0, # Duración mínima del audio requerida
             format="wav", # Formato de audio admitido
@@ -143,7 +143,7 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
         gr.Button("Volver").click(cambiar_pestaña, outputs=[pag_predictor, chatbot]) # Botón para volver a la pestaña del chatbot
     with gr.Column(visible=False) as pag_monitor: # Columna para la pestaña del monitor
         gr.Markdown("<h2>Monitor</h2>") # Título de la pestaña del monitor
-        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Detecta en tiempo real si tu bebé está llorando y por qué</h4>")  # Descripción de la pestaña del monitor
+        gr.Markdown("<h4 style='text-align: center; font-size: 1.5em'>Detecta en tiempo real si tu bebé está llorando y por qué</h4>")
         audio_stream = gr.Audio(
             format="wav", # Formato de audio admitido
             label="Baby recorder", # Etiqueta del campo de entrada de audio
