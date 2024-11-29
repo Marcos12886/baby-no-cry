@@ -1,6 +1,4 @@
 import torch
-import torchaudio # Librería para procesamiento de audio
-import torch.nn.functional as F # Importa la API funcional de torch, incluyendo softmax
 import gradio as gr # Gradio para crear interfaces web
 from dotenv import load_dotenv
 from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
@@ -45,7 +43,7 @@ def predict(audio_path_pred):
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
         logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection")
-        probabilities = F.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
+        probabilities = torch.nn.functional.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtiene las probabilidades asociadas al llanto
         avg_crying_probability = crying_probabilities.mean()*100 # Calcula la probabilidad promedio de llanto
         if avg_crying_probability < 15: # Si la probabilidad de llanto es menor a un 15%, se predice la razón
