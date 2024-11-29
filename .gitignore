@@ -1,4 +1,3 @@
-.gitignore
 .dockerignore
 distilhubert-finetuned-mixed-data
 distilhubert-finetuned-cry-detector
