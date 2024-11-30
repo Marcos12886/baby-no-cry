@@ -1,7 +1,7 @@
 import torch
-import gradio as gr # Gradio para crear interfaces web
+import gradio as gr
 from dotenv import load_dotenv
-from model import predict_params, AudioDataset # Importaciones personalizadas: carga de modelo y procesamiento de audio
+from model import predict_params, AudioDataset
 
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -10,7 +10,7 @@ model_class, id2label_class = predict_params(
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
     undersample_normal=True # Activa el submuestreo para equilibrar clases
     )
-model_mon, id2label_mon = predict_params(
+model_detec, id2label_mon = predict_params(
     model_path="distilhubert-finetuned-cry-detector", # Ruta al modelo detector de llanto
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
     undersample_normal=False # No submuestrear datos
@@ -28,7 +28,7 @@ def call(audiopath, model, dataset_path, undersample_normal=False):
     return logits # Retorna los logits (valores sin procesar)
 
 def predict(audio_path_pred):
-    with torch.no_grad(): # Desactiva gradientes para la inferencia
+    with torch.no_grad():
         logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False)
         predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtiene la clase predicha a partir de los logits
         label_class = id2label_class[predicted_class_ids_class] # Convierte el ID de clase en una etiqueta de texto
@@ -42,7 +42,7 @@ def predict(audio_path_pred):
 
 def predict_stream(audio_path_stream):
     with torch.no_grad(): # Desactiva gradientes durante la inferencia
-        logits = call(audio_path_stream, model=model_mon, dataset_path="data/baby_cry_detection", undersample_normal=False)
+        logits = call(audio_path_stream, model=model_detec, dataset_path="data/baby_cry_detection", undersample_normal=False)
         probabilities = torch.nn.functional.softmax(logits, dim=-1) # Aplica softmax para convertir los logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtiene las probabilidades asociadas al llanto
         avg_crying_probability = crying_probabilities.mean()*100 # Calcula la probabilidad promedio de llanto
@@ -73,7 +73,7 @@ def chatbot_config(history, type='messages'):
         top_p=top_p,
         do_sample=True
     )
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    response = tokenizer.decode(outputs[0])
     return response # Retorna la respuesta generada por el modelo
 
 def cambiar_pestaña():
@@ -130,7 +130,6 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             label="Baby recorder", # Etiqueta del campo de entrada de audio
             type="filepath", # Tipo de entrada de audio (archivo)
         )
-        prediction_output = gr.Markdown() # Salida para mostrar la predicción
         gr.Button("¿Por qué llora?").click(
             predict, # Función de predicción para el botón
             inputs=audio_input, # Entrada de audio para la función de predicción
@@ -150,13 +149,12 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             type="filepath", # Tipo de entrada de audio (archivo)
             streaming=True # Habilitar la transmisión de audio en tiempo real
         )
-        volver = gr.Button("Volver") # Botón para volver a la pestaña del chatbot
         audio_stream.stream(
             predict_stream, # Función para realizar la predicción en tiempo real
             inputs=audio_stream, # Entradas para la función de predicción en tiempo real
             outputs=gr.HTML() # Salida para mostrar la predicción en tiempo real
         )
-        volver.click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Botón para volver a la pestaña del chatbot
+        gr.Button("Volver").click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Botón para volver a la pestaña del chatbot
     boton_predictor.click(cambiar_pestaña, outputs=[chatbot, pag_predictor]) # Botón para cambiar a la pestaña del predictor
     boton_monitor.click(cambiar_pestaña, outputs=[chatbot, pag_monitor]) # Botón para cambiar a la pestaña del monitor
 demo.launch() # Lanzar la interfaz gráfica
