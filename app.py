@@ -10,7 +10,7 @@ model_class, id2label_class = predict_params(
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
     undersample_normal=True # Activa el submuestreo para equilibrar clases
     )
-model_detec, id2label_mon = predict_params(
+model_detec, _ = predict_params(
     model_path="distilhubert-finetuned-cry-detector", # Ruta al modelo detector de llanto
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección de llanto
     undersample_normal=False # No submuestrear datos
@@ -55,8 +55,6 @@ def predict_stream(audio_path_stream):
 def chatbot_config(history, type='messages'):
     system_message = "You are a Chatbot specialized in baby health and care." # Mensaje inicial del chatbot
     max_tokens = 512 # Máximo de tokens para la respuesta
-    temperature = 0.5 # Controla la aleatoriedad de las respuestas
-    top_p = 0.95 # Top-p sampling para filtrar palabras
     messages = [system_message] # Configura el mensaje del sistema para el chatbot
     for val in history: # Añade el historial de la conversación al mensaje
         if val[0]:
@@ -69,12 +67,12 @@ def chatbot_config(history, type='messages'):
     ouputs = model.generate(
         inputs,
         max_length=max_tokens,
-        temperature=temperature,
-        top_p=top_p,
+        temperature=0.5,
+        top_p=0.95,
         do_sample=True
     )
     response = tokenizer.decode(outputs[0])
-    return response # Retorna la respuesta generada por el modelo
+    return response
 
 def cambiar_pestaña():
     return gr.update(visible=False), gr.update(visible=True) # Esta función cambia la visibilidad de las pestañas en la interfaz
@@ -144,15 +142,15 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             "Detecta en tiempo real si tu bebé está llorando y por qué</h4>"
         )
         audio_stream = gr.Audio(
+            streaming=True, # Habilitar la transmisión de audio en tiempo real
             format="wav", # Formato de audio admitido
             label="Baby recorder", # Etiqueta del campo de entrada de audio
             type="filepath", # Tipo de entrada de audio (archivo)
-            streaming=True # Habilitar la transmisión de audio en tiempo real
         )
         audio_stream.stream(
             predict_stream, # Función para realizar la predicción en tiempo real
             inputs=audio_stream, # Entradas para la función de predicción en tiempo real
-            outputs=gr.HTML() # Salida para mostrar la predicción en tiempo real
+            outputs=gr.Markdown() # Salida para mostrar la predicción en tiempo real
         )
         gr.Button("Volver").click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Botón para volver a la pestaña del chatbot
     boton_predictor.click(cambiar_pestaña, outputs=[chatbot, pag_predictor]) # Botón para cambiar a la pestaña del predictor
