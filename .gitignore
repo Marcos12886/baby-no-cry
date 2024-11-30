@@ -7,3 +7,4 @@ env-bebes
 __pycache__
 data
 notas.txt
+Dockerfile
