@@ -15,13 +15,13 @@ from transformers import (
 
 load_dotenv() # Cargar variables de entorno
 MODEL = "ntu-spml/distilhubert" # Nombre del modelo base utilizado
-FEATURE_EXTRACTOR = Wav2Vec2FeatureExtractor.from_pretrained(MODEL) # Extracción de características del modelo base
+FEATURE_EXTRACTOR = Wav2Vec2FeatureExtractor.from_pretrained(MODEL) # Caracteristicas del modelo base
 seed = 123
 MAX_DURATION = 1.00 # Máxima duración de los audios
 SAMPLING_RATE = FEATURE_EXTRACTOR.sampling_rate # 16kHz
 config_file = "config.json" # Archivo con los argumentos de entrenamiento
 batch_size = 1024 # Tamaño del batch para hacer el split solo 1 vez
-num_workers = 12 # Número de núcleos de CPU utilizados en la carga de datos
+num_workers = 12 # Número de núcleos de CPU utilizados
 
 class AudioDataset(Dataset):
     """Dataset de audios"""
@@ -49,7 +49,7 @@ class AudioDataset(Dataset):
         label_counts = Counter(self.labels)
         other_counts = [count for label, count in label_counts.items() if label != normal_label]
         if other_counts:
-            target_count = max(other_counts) # Establecemos el tamaño objetivo igual al mayor número de ejemplos no normales
+            target_count = max(other_counts) # Submestrear al tamaño de la segunda categoria con mas muestras
             normal_indices = [i for i, label in enumerate(self.labels) if label == normal_label]
             keep_indices = random.sample(normal_indices, target_count)
             new_file_paths = []
@@ -91,7 +91,7 @@ class AudioDataset(Dataset):
         if waveform.shape[1] > max_length:
             waveform = waveform[:, :max_length] # Truncamos si supera la duración máxima
         else:
-            waveform = torch.nn.functional.pad(waveform, (0, max_length - waveform.shape[1])) # Padding si audio más corto
+            waveform = torch.nn.functional.pad(waveform, (0, max_length - waveform.shape[1])) # Padding audios cortos
         inputs = FEATURE_EXTRACTOR(
             waveform.squeeze(), # Aplanamos el tensor a una dimensión
             sampling_rate=SAMPLING_RATE, # Nos aseguramos que sea 16kHz
