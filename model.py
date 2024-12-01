@@ -7,18 +7,17 @@ import torchaudio
 from dotenv import load_dotenv
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler, Subset
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
-from collections import Counter
 from transformers import (
     Wav2Vec2FeatureExtractor, HubertConfig, HubertForSequenceClassification,
     Trainer, TrainingArguments
     )
 
 load_dotenv() # Cargar variables de entorno
-MODEL = "ntu-spml/distilhubert" # Nombre del modelo base utilizado
-FEATURE_EXTRACTOR = Wav2Vec2FeatureExtractor.from_pretrained(MODEL) # Caracteristicas del modelo base
+MODEL = "ntu-spml/distilhubert" # Nombre del modelo base
+feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(MODEL) # Caracteristicas modelo base
 seed = 123
-MAX_DURATION = 1.00 # Máxima duración de los audios
-SAMPLING_RATE = FEATURE_EXTRACTOR.sampling_rate # 16kHz
+max_duration = 1.00 # Máxima duración de los audios
+sampling_rate = feature_extractor.sampling_rate # 16kHz
 config_file = "config.json" # Archivo con los argumentos de entrenamiento
 batch_size = 1024 # Tamaño del batch para hacer el split solo 1 vez
 num_workers = 12 # Número de núcleos de CPU utilizados
@@ -46,7 +45,9 @@ class AudioDataset(Dataset):
     def undersample_normal_class(self):
         """Método para submuestrear la clase normal y equilibrar el dataset"""
         normal_label = self.label2id.get('1s_normal')
-        label_counts = Counter(self.labels)
+        label_counts = {}
+        for label in self.labels:
+            label_counts[label] = label_counts.get(label, 0) + 1
         other_counts = [count for label, count in label_counts.items() if label != normal_label]
         if other_counts:
             target_count = max(other_counts) # Submestrear al tamaño de la segunda categoria con mas muestras
@@ -81,20 +82,20 @@ class AudioDataset(Dataset):
             audio_path,
             normalize=True # Convertir a float32
             )
-        if sample_rate != SAMPLING_RATE: # Resamplear si no es 16kHz
-            resampler = torchaudio.transforms.Resample(sample_rate, SAMPLING_RATE)
+        if sample_rate != sampling_rate: # Resamplear si no es 16kHz
+            resampler = torchaudio.transforms.Resample(sample_rate, sampling_rate)
             waveform = resampler(waveform)
         if waveform.shape[0] > 1: # Convertimos a mono si es estéreo
             waveform = waveform.mean(dim=0, keepdim=True)
         waveform = waveform / (torch.max(torch.abs(waveform)) + 1e-6) # Normalizar evitando dividir por 0
-        max_length = int(SAMPLING_RATE * MAX_DURATION)
+        max_length = int(sampling_rate * max_duration)
         if waveform.shape[1] > max_length:
             waveform = waveform[:, :max_length] # Truncamos si supera la duración máxima
         else:
             waveform = torch.nn.functional.pad(waveform, (0, max_length - waveform.shape[1])) # Padding audios cortos
-        inputs = FEATURE_EXTRACTOR(
+        inputs = feature_extractor(
             waveform.squeeze(), # Aplanamos el tensor a una dimensión
-            sampling_rate=SAMPLING_RATE, # Nos aseguramos que sea 16kHz
+            sampling_rate=sampling_rate, # Nos aseguramos que sea 16kHz
             return_tensors="pt" # Devolvemos los tensores de PyTorch
         )
         return inputs.input_values.squeeze()
@@ -118,7 +119,9 @@ def build_label_mappings(dataset_path):
 
 def compute_class_weights(labels):
     """Calcula los pesos de las clases para balancear el dataset"""
-    class_counts = Counter(labels) # Contamos las ocurrencias de cada clase
+    class_counts = {} # Contamos las ocurrencias de cada clase
+    for label in labels:
+        class_counts[label] = class_counts.get(label, 0) + 1
     total_samples = len(labels) # Número total de muestras
     class_weights = {cls: total_samples / count for cls, count in class_counts.items()} # Calculamos los pesos
     return [class_weights[label] for label in labels] # Devolvemos los pesos correspondientes a las etiquetas
