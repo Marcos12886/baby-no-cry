@@ -153,11 +153,11 @@ def create_dataloader(dataset_path, undersample_normal, test_size=0.2, shuffle=T
     )
     return train_dataloader, test_dataloader, id2label # Devolvemos los dataloaders y el mapeo de etiquetas
 
-def load_model(MODEL, id2label, num_labels):
+def load_model(MODEL, id2label):
     """Carga el modelo preentrenado"""
     config = HubertConfig.from_pretrained(
         pretrained_model_name_or_path=MODEL, # Cargamos la configuración del modelo
-        num_labels=num_labels, # Especificamos el número de etiquetas
+        num_labels=len(id2label), # Especificamos el número de etiquetas
         id2label=id2label, # Mapeo de id a etiquetas
         finetuning_task="audio-classification" # Indicamos que el finetuning es para clasificación de audio
     )
@@ -174,7 +174,7 @@ def load_model(MODEL, id2label, num_labels):
 def train_params(dataset_path, undersample_normal):
     """Entrenar modelo"""
     train_dataloader, test_dataloader, id2label = create_dataloader(dataset_path, undersample_normal)
-    model = load_model(MODEL, id2label, num_labels=len(id2label))
+    model = load_model(MODEL, id2label)
     return model, train_dataloader, test_dataloader, id2label
 
 def compute_metrics(pred):
