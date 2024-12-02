@@ -153,20 +153,21 @@ def create_dataloader(dataset_path, undersample_normal, test_size=0.2, shuffle=T
     )
     return train_dataloader, test_dataloader, id2label # Devolvemos los dataloaders y el mapeo de etiquetas
 
-def load_model(model_path, id2label, num_labels):
+def load_model(MODEL, id2label, num_labels):
     """Carga el modelo preentrenado"""
     config = HubertConfig.from_pretrained(
-        pretrained_model_name_or_path=model_path, # Cargamos la configuración del modelo
+        pretrained_model_name_or_path=MODEL, # Cargamos la configuración del modelo
         num_labels=num_labels, # Especificamos el número de etiquetas
         id2label=id2label, # Mapeo de id a etiquetas
         finetuning_task="audio-classification" # Indicamos que el finetuning es para clasificación de audio
     )
-    device = torch.device("cuda") # Utilizamos GPU
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Utilizamos GPU
     model = HubertForSequenceClassification.from_pretrained(
-        pretrained_model_name_or_path=model_path,
+        pretrained_model_name_or_path=MODEL,
         config=config,
         torch_dtype=torch.float32 # Necesario para evitar errores de precisión
     )
+
     model.to(device)
     return model
 
@@ -175,12 +176,6 @@ def train_params(dataset_path, undersample_normal):
     train_dataloader, test_dataloader, id2label = create_dataloader(dataset_path, undersample_normal)
     model = load_model(MODEL, id2label, num_labels=len(id2label))
     return model, train_dataloader, test_dataloader, id2label
-
-def predict_params(dataset_path, model_path, undersample_normal):
-    """Predecir en app.py"""
-    _, _, id2label = create_dataloader(dataset_path, undersample_normal)
-    model = load_model(model_path, id2label, num_labels=len(id2label))
-    return model, id2label
 
 def compute_metrics(pred):
     """Calcular métricas"""

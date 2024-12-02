@@ -1,17 +1,15 @@
 import torch
 import gradio as gr
 from dotenv import load_dotenv
-from model import predict_params, AudioDataset
+from model import AudioDataset, train_params
 
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model_class, id2label_class = predict_params(
-    model_path="distilhubert-finetuned-mixed-data", # Ruta al modelo para la predicción de clases
+model_class, _, _, id2label_class = train_params(
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
     undersample_normal=True # Activa el submuestreo para equilibrar clases
     )
-model_detec, _ = predict_params(
-    model_path="distilhubert-finetuned-cry-detector", # Ruta al modelo detector
+model_detec, _, _, _ = train_params(
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección
     undersample_normal=False # No submuestrear datos
     )
@@ -47,8 +45,8 @@ def predict_stream(audio_path_stream):
         crying_probabilities = probabilities[:, 1] # Obtener probabilidades
         avg_crying_probability = crying_probabilities.mean()*100 # Probabilidad media de llanto
         if avg_crying_probability < 15: # Si probabilidad de predicción > 15 dar la razón
-            label_class = predict(audio_path_stream) # Predicción para determinar la razón
-            return f"Está llorando por: {label_class}" # Razon de lloro
+            label_class = predict(audio_path_stream) # Hacer la predicción
+            return f"Está llorando por: {label_class}" # Razon lloro
         else:
             return "No está llorando"
 
