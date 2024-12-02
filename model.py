@@ -122,8 +122,7 @@ def compute_class_weights(labels):
     class_counts = {} # Contamos las ocurrencias de cada clase
     for label in labels:
         class_counts[label] = class_counts.get(label, 0) + 1
-    total_samples = len(labels) # Número total de muestras
-    class_weights = {cls: total_samples / count for cls, count in class_counts.items()} # Calculamos los pesos
+    class_weights = {cls: len(labels) / count for cls, count in class_counts.items()} # Calculamos los pesos
     return [class_weights[label] for label in labels] # Devolvemos los pesos correspondientes a las etiquetas
 
 def create_dataloader(dataset_path, undersample_normal, test_size=0.2, shuffle=True, pin_memory=True):
@@ -171,8 +170,9 @@ def load_model(MODEL, id2label):
     model.to(device)
     return model
 
-def train_params(dataset_path, undersample_normal):
+def train_params(dataset_path, model_type):
     """Entrenar modelo"""
+    undersample_normal = (model_type == "class") # True classifier, False detector
     train_dataloader, test_dataloader, id2label = create_dataloader(dataset_path, undersample_normal)
     model = load_model(MODEL, id2label)
     return model, train_dataloader, test_dataloader, id2label
@@ -190,10 +190,10 @@ def compute_metrics(pred):
         'recall': recall,
         }
 
-def main(training_args, output_dir, dataset_path, undersample_normal):
+def main(training_args, output_dir, dataset_path, model_type):
     """Entrenar modelo"""
     seed_everything()
-    model, train_dataloader, test_dataloader, _ = train_params(dataset_path, undersample_normal)
+    model, train_dataloader, test_dataloader, _ = train_params(dataset_path, model_type)
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -234,4 +234,4 @@ if __name__ == "__main__":
     elif args.n == "class":
         undersample_normal = True
     # Iniciamos el proceso de entrenamiento
-    main(training_args, output_dir, dataset_path, undersample_normal)
+    main(training_args, output_dir, dataset_path, args.n)

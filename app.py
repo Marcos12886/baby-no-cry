@@ -7,11 +7,11 @@ load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, _, _, id2label_class = train_params(
     dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
-    undersample_normal=True # Activa el submuestreo para equilibrar clases
+    model_type="class",
     )
 model_detec, _, _, _ = train_params(
     dataset_path="data/baby_cry_detection", # Ruta al dataset de detección
-    undersample_normal=False # No submuestrear datos
+    model_type="detec",
     )
 
 def call(audiopath, model, dataset_path, undersample_normal=False):
