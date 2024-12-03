@@ -145,8 +145,8 @@ with gr.Blocks(theme=my_theme, fill_height=True, fill_width=True) as demo:
             type="filepath", # Tipo de entrada de audio (archivo)
         )
         audio_stream.stream(
-            fn=predict_stream, # Función para realizar la predicción en tiempo real
-            inputs=audio_stream, # Entradas para la función de predicción en tiempo real
+            fn=predict_stream, # Función para predecir en tiempo real
+            inputs=audio_stream, # Entradas para predecir en tiempo real
             outputs=gr.Markdown() # Salida para mostrar la predicción en tiempo real
         )
         gr.Button("Volver").click(cambiar_pestaña, outputs=[pag_monitor, chatbot]) # Mostrar chatbot
