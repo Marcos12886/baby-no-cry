@@ -9,7 +9,6 @@ pipeline {
 		stage('Build docker image') {
 			steps {
 				sh "docker build -t ${DOCKER_IMAGE_NAME} ."
-				}
 			}
 		}
 		stage('Run Docker Container') {
