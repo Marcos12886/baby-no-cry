@@ -8,12 +8,21 @@ pipeline {
 	stages {
 		stage('Build docker image') {
 			steps {
-				sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+				script {
+					sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+				}
 			}
 		}
 		stage('Run Docker Container') {
 			steps {
-				sh "docker run -d -p 7860:7860 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+				script {
+					sh """
+						docker stop ${DOCKER_CONTAINER_NAME} || true
+						docker rm ${DOCKER_CONTAINER_NAME} || true
+						docker run -d -p 7860:7860 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}
+					"""
+
+				}
 			}
 		}
 	}
