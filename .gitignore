@@ -2,10 +2,8 @@
 distilhubert-finetuned-mixed-data
 distilhubert-finetuned-cry-detector
 .env
-env-bebe
-env-bebes
+venv-bebe
+venv-bebes
 __pycache__
 data
 notas.txt
-Dockerfile
-Jenkinsfile
