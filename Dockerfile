@@ -26,7 +26,7 @@ RUN pip install soundfile
 COPY . .
 
 # Exponer el puerto de Gradio, no se si puedes poner otro
-EXPOSE 7860
+EXPOSE 80
 
 # Variables de entorno
 ENV GRADIO_SERVER_NAME="0.0.0.0"
