@@ -3,7 +3,8 @@ FROM ubuntu:22.04
 
 # Actualizar paquetes y descargar soundfile
 RUN apt-get update && apt-get install -y \
-	python3 python3-pip \
+	python3 \
+	python3-pip \
 	libsndfile1 
 
 # Linkear pythons (sino, da error)
