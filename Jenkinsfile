@@ -6,15 +6,18 @@ pipeline {
                 sh 'python3.10 --version'
             }
         }
-        stage('Crear entorno') {
+        stage('Crear Imagen de Docker') {
             steps {
-                sh '''
-                    python3.10 -m venv entorno
-                    . entorno/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                    python3.10 app.py
-                    '''
+                script {
+                    docker.build('your-app-name')
+                }
+            }
+        }
+        stage('Run application') {
+            steps {
+                script {
+                    docker.image('your-app-name').run('-p 7860:7860')
+                }
             }
         }
     }
