@@ -8,15 +8,13 @@ pipeline {
         }
         stage('Crear Imagen de Docker') {
             steps {
-                script {
-                    docker.build('your-app-name')
+                sh 'docker build -t docker-aplicacion .'
                 }
             }
         }
         stage('Run application') {
             steps {
-                script {
-                    docker.image('your-app-name').run('-p 7860:7860')
+                sh 'docker run -d -p 7860:7860 --name contenedor-app docker-aplicacion'
                 }
             }
         }
