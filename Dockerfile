@@ -18,8 +18,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* 
 
 # Linkear pythons (sino, da error)
-RUN ln -s /usr/bin/python3.10 /usr/bin/python3 \
-    && ln -sf /usr/bin/python3.10 /usr/bin/python 
+RUN ln -s /usr/bin/python3 /usr/bin/python 
 
 # Directorio de la app
 WORKDIR /app
