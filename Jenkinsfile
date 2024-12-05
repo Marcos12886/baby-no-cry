@@ -1,31 +1,29 @@
 pipeline {
     agent any
-
     stages {
         stage('version') {
             steps {
-                // Check Python version
-                sh 'python --version'
+                sh 'python3 --version'
+            }
+        }
+        stage('Crear entorno') {
+            steps {
+                sh 'python3 -m venv venv'
+            }
+        }
+        stage('Activar entorno') {
+            steps {
+                sh '. venv/bin/activate'
             }
         }
         stage('Install Dependencies') {
             steps {
-                // Assuming you have a requirements.txt file for your Python app
-                sh 'pip install -r requirements.txt'
+                sh '/usr/bin/python3 -m pip install --user -r requirements.txt'
             }
         }
-        stage('Run Application') {
+        stage('hello') {
             steps {
-                // Run your Python app in the background. 
-                // We use nohup to prevent the script from hanging if the console is closed, 
-                // and '&' to run it in the background.
-                sh 'nohup python app.py &'
-
-                // Optional: Give it a second to start up before checking if it's running
-                sh 'sleep 5'
-
-                // Check if the app is running by looking for a process ID
-                sh 'ps aux | grep "[p]ython app.py" || echo "App did not start or has crashed"'
+                sh 'python3 archivo.py'
             }
         }
     }
