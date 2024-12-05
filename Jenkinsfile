@@ -11,6 +11,7 @@ pipeline {
                 sh '''
                     python3.10 -m venv entorno
                     . entorno/bin/activate
+                    pip install --upgrade pip
                     pip install -r requirements.txt
                     python3.10 archivo.py
                     '''
