@@ -13,7 +13,7 @@ pipeline {
                     . entorno/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
-                    python3.10 archivo.py
+                    python3.10 app.py
                     '''
             }
         }
