@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "docker-aplicacion"
-        GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
     }
 
     stages {
