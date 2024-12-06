@@ -34,16 +34,18 @@ pipeline {
         }
         stage('SSH al servidor Ubuntu en local y Deploy') {
             steps {
-                sshagent([SSH_CREDENTIALS_ID]) {
-                    sh """
-                    ssh -o StrictHostKeyCheking=no ${SERVER_USER}@${SERVER_IP} << EOF
-                        docker stop ${DOCKER_IMAGE} || true
-                        docker rm ${DOCKER_IMAGE} || true
-                        docker rmi ${DOCKER_IMAGE} || true
-                        docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest || true
-                        docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
-                        docker run -d --name ${DOCKER_IMAGE} -p 7860:7860 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
-                    """
+                script {
+                    sshagent([SSH_CREDENTIALS_ID]) {
+                        sh """
+                        ssh -o StrictHostKeyCheking=no ${SERVER_USER}@${SERVER_IP} << EOF
+                            docker stop ${DOCKER_IMAGE} || true
+                            docker rm ${DOCKER_IMAGE} || true
+                            docker rmi ${DOCKER_IMAGE} || true
+                            docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest || true
+                            docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
+                            docker run -d --name ${DOCKER_IMAGE} -p 7860:7860 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
+                        """
+                    }
                 }
             }
         }
