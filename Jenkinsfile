@@ -3,8 +3,6 @@ pipeline {
     stages {
         stage('Crear Imagen de Docker') {
             steps {
-                sh 'ls'
-                sh 'cat src/pages/Home.jsx'
                 sh 'docker build -t docker-aplicacion .'
                 }
             }
