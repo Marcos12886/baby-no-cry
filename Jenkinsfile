@@ -1,11 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('version') {
-            steps {
-                sh 'python3.10 --version'
-            }
-        }
         stage('Crear Imagen de Docker') {
             steps {
                 sh 'docker build -t docker-aplicacion .'
