@@ -5,6 +5,10 @@ pipeline {
         DOCKER_IMAGE = "docker-aplicacion"
         DOCKER_REGISTRY = "ghcr.io/marcos12886"
         GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
+        SSH_CREDENTIALS_ID = "key"
+        SERVER_IP = "172.20.0.2"
+        SERVER_USER = "root"
+
     }
 
     stages {
@@ -29,8 +33,21 @@ pipeline {
                 }
             }
         }
-        stage('Run application') {
+        stage('SSH al servidor Ubuntu en local y Deploy') {
             steps {
+                sshagen([SSH_CREDENTIALS_ID]) {
+                    sh """
+                    ssh -o StrictHostKeyCheking=no ${SERVER_USER}@${SERVER_IP} << EOF
+                        docker stop ${DOCKER_IMAGE} || true
+                        docker rm ${DOCKER_IMAGE} || true
+                        docker rmi ${DOCKER_IMAGE} || true
+                        docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest || true
+                        docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
+                        docker run -d --name ${DOCKER_IMAGE} -p 7860:7860 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
+                    """
+                }
+
+
                 sh 'docker run -d -p 7860:7860 --name contenedor-app docker-aplicacion'
             }
         }
