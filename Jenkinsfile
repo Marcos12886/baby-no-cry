@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "docker-aplicacion"
-        DOCKER_REGISTRY = "ghcr.io/Marcos12886"
+        DOCKER_REGISTRY = "ghcr.io/marcos12886"
         GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
     }
 
