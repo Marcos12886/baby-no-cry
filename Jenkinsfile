@@ -8,7 +8,6 @@ pipeline {
         SSH_CREDENTIALS_ID = "key"
         SERVER_IP = "172.20.0.2"
         SERVER_USER = "root"
-
     }
 
     stages {
@@ -46,10 +45,12 @@ pipeline {
                         docker run -d --name ${DOCKER_IMAGE} -p 7860:7860 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest
                     """
                 }
-
-
-                sh 'docker run -d -p 7860:7860 --name contenedor-app docker-aplicacion'
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
