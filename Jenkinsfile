@@ -11,7 +11,7 @@ pipeline {
 
         stage('Clonar repositorio') {
             steps {
-                git url: 'https://github.com/Marcos12886/baby-no-cry'
+                git credentialId: "${GIT_CREDENTIALS_ID}",  url: 'https://github.com/Marcos12886/baby-no-cry'
             }
         }
 
