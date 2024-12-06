@@ -14,27 +14,24 @@ pipeline {
                 git credentialsId: "${GIT_CREDENTIALS_ID}",  url: 'https://github.com/Marcos12886/baby-no-cry'
             }
         }
-
         stage('Crear Imagen de Docker') {
             steps {
                 sh 'docker build -t docker-aplicacion .'
-                }
             }
+        }
         stage('Pushear imagen de Docker al GitHub Registry') {
             steps {
                 script {
-                    docker.withRegistry('https://ghrc.io', 'GIT_CREDENTIALS_ID') {
+                    docker.withRegistry('https://ghcr.io', 'GIT_CREDENTIALS_ID') {
                         sh 'docker tag ${DOCKER_IMAGE}:latest ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest'
                         sh 'docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest'
                     }
                 }
             }
         }
-
         stage('Run application') {
             steps {
                 sh 'docker run -d -p 7860:7860 --name contenedor-app docker-aplicacion'
-                }
             }
         }
     }
