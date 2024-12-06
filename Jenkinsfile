@@ -34,7 +34,7 @@ pipeline {
         }
         stage('SSH al servidor Ubuntu en local y Deploy') {
             steps {
-                sshagen([SSH_CREDENTIALS_ID]) {
+                sshagent([SSH_CREDENTIALS_ID]) {
                     sh """
                     ssh -o StrictHostKeyCheking=no ${SERVER_USER}@${SERVER_IP} << EOF
                         docker stop ${DOCKER_IMAGE} || true
