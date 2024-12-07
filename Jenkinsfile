@@ -37,6 +37,7 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS_ID]) {
                         sh """
+                        set -e
                         ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << EOF
                             docker stop ${DOCKER_IMAGE} || true
                             docker rm ${DOCKER_IMAGE} || true
