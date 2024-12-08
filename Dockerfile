@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
 RUN ln -s /usr/bin/python3 /usr/bin/python 
 
 # Directorio de la app
-WORKDIR /archivo
+WORKDIR /app
 
 # Actulizar pip
 RUN python3.10 -m pip install --upgrade pip 
@@ -45,4 +45,4 @@ EXPOSE 7860
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 # Run la aplicacion
-CMD ["python", "archivo.py"]
+CMD ["python", "app.py"]
