@@ -39,7 +39,7 @@ RUN python3.10 -m pip install soundfile
 COPY . .
 
 # Exponer el puerto de Gradio, no se si puedes poner otro
-EXPOSE 7860
+EXPOSE 7861
 
 # Variables de entorno
 ENV GRADIO_SERVER_NAME="0.0.0.0"
