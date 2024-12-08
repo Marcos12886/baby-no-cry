@@ -1,5 +1,5 @@
 # Utilizar Ubuntu
-FROM ubuntu:lts
+FROM ubuntu:latest
 
 # Eliminar warmings de apt
 ENV DEBIAN_FRONTEND=noninteractive
