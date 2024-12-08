@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
 RUN ln -s /usr/bin/python3 /usr/bin/python 
 
 # Directorio de la app
-WORKDIR /app
+WORKDIR /archivo
 
 # Actulizar pip
 RUN python3.10 -m pip install --upgrade pip 
@@ -39,10 +39,10 @@ RUN python3.10 -m pip install soundfile
 COPY . .
 
 # Exponer el puerto de Gradio, no se si puedes poner otro
-EXPOSE 7861
+EXPOSE 7860
 
 # Variables de entorno
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 # Run la aplicacion
-CMD ["python", "app.py"]
+CMD ["python", "archivo.py"]

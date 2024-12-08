@@ -6,7 +6,7 @@ pipeline {
         DOCKER_REGISTRY = "ghcr.io/marcos12886"
         GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
         SSH_CREDENTIALS_ID = "key"
-        SERVER_IP = "172.20.0.3"
+        SERVER_IP = "172.20.0.2"
         SERVER_USER = "root"
     }
 
