@@ -1,5 +1,5 @@
 # Utilizar Ubuntu
-FROM ubuntu:22.04
+FROM ubuntu:lts
 
 # Eliminar warmings de apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     libsndfile1 \
     && rm -rf /var/lib/apt/lists/* 
 
-# Linkear pythons (sino, da error)
+# Linkear pythons
 RUN ln -s /usr/bin/python3 /usr/bin/python 
 
 # Directorio de la app
