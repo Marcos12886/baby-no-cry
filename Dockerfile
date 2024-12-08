@@ -1,5 +1,5 @@
 # Utilizar Ubuntu
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 # Eliminar warmings de apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,6 +22,9 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Directorio de la app
 WORKDIR /archivo
+
+# Actulizar pip
+RUN python3.10 -m pip install --upgrade pip 
 
 # Copiar requirements
 COPY requirements.txt .
