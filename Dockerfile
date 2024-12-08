@@ -23,9 +23,6 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Directorio de la app
 WORKDIR /archivo
 
-# Actulizar pip
-RUN python3.10 -m pip install --upgrade pip 
-
 # Copiar requirements
 COPY requirements.txt .
 
