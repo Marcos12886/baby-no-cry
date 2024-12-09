@@ -41,4 +41,4 @@ EXPOSE 7860
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 # Run la aplicacion
-CMD ["python", "app.py"]
+CMD ["python", "archivo.py"]
