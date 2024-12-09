@@ -23,13 +23,17 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Directorio de la app
 WORKDIR /archivo
 
+# Actulizar pip
+RUN python3.10 -m pip install --upgrade pip 
+
 # Copiar requirements
 COPY requirements.txt .
 
-# Actulizar pip, instalar requirements, instalar soundfile
-RUN python3.10 -m pip install --upgrade pip \
-    && python3.10 -m pip install --no-cache-dir -r requirements.txt \
-    && python3.10 -m pip install soundfile
+# Actualizar pip e instalar librerias
+RUN python3.10 -m pip install --no-cache-dir -r requirements.txt 
+
+# Instalar soundfile
+RUN python3.10 -m pip install soundfile
 
 # Copiar el resto de la app
 COPY . .
