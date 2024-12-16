@@ -1,0 +1,17 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag myapp:latest
+      - name: Run Docker container
+        run: docker run myapp:latest
