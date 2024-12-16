@@ -6,17 +6,17 @@ from model import AudioDataset, train_params
 load_dotenv()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_class, _, _, id2label_class = train_params(
-    dataset_path="data/mixed_data", # Ruta al dataset de audio mixto
+    dataset_path="data/mixed_data",
     model_type="class",
     )
 model_detec, _, _, _ = train_params(
-    dataset_path="data/baby_cry_detection", # Ruta al dataset de detección
+    dataset_path="data/baby_cry_detection",
     model_type="detec",
     )
 
 def call(audiopath, model, dataset_path, undersample_normal=False):
-    model.to(device) # Envía el modelo a la GPU (o CPU si no hay GPU disponible)
-    model.eval() # Pone el modelo en modo de evaluación (desactiva dropout, batchnorm)
+    model.to(device)
+    model.eval() # (desactiva dropout, batchnorm)
     audio_dataset = AudioDataset(dataset_path, {}, undersample_normal) # Carga dataset de audio
     processed_audio = audio_dataset.preprocess_audio(audiopath) # Preprocesa el audio
     inputs = {"input_values": processed_audio.to(device).unsqueeze(0)}
@@ -28,10 +28,10 @@ def call(audiopath, model, dataset_path, undersample_normal=False):
 def predict(audio_path_pred):
     with torch.no_grad():
         logits = call(audio_path_pred, model=model_class, dataset_path="data/mixed_data", undersample_normal=False)
-        predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtiene la clase predicha a partir de los logits
+        predicted_class_ids_class = torch.argmax(logits, dim=-1).item() # Obtener clase
         label_class = id2label_class[predicted_class_ids_class] # Convierte el ID de clase en una etiqueta de texto
-        label_mapping = {0: 'Cansancio/Incomodidad', 1: 'Dolor', 2: 'Hambre', 3: 'Problemas para respirar'} # Mapear etiquetas
-        label_class = label_mapping.get(predicted_class_ids_class, label_class) # Aplicar las etiquetas distintas
+        label_mapping = {0: 'Cansancio/Incomodidad', 1: 'Dolor', 2: 'Hambre', 3: 'Problemas para respirar'}
+        label_class = label_mapping.get(predicted_class_ids_class, label_class) # Aplicar etiquetas cambiadas
     return f"""
         <div style='text-align: center; font-size: 1.5em'>
             <span style='display: inline-block; min-width: 300px;'>{label_class}</span>
@@ -39,7 +39,7 @@ def predict(audio_path_pred):
     """
 
 def predict_stream(audio_path_stream):
-    with torch.no_grad(): # Desactivar gradientes durante inferencia
+    with torch.no_grad(): # Desactivar gradientes
         logits = call(audio_path_stream, model=model_detec, dataset_path="data/baby_cry_detection", undersample_normal=False)
         probabilities = torch.nn.functional.softmax(logits, dim=-1) # Softmax para convertir logits en probabilidades
         crying_probabilities = probabilities[:, 1] # Obtener probabilidades
