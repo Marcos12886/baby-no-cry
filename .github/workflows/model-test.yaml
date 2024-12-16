@@ -1,0 +1,22 @@
+name: Python Script Execution
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run model.py
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.14'
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Execute Python script
+        run: python model.py --n class
