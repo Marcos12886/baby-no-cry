@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run model.py
+      - name: Run archivo.py
         uses: actions/setup-python@v4
         with:
           python-version: '3.10.14'
@@ -19,4 +19,4 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Execute Python script
-        run: python model.py --n class
+        run: python archivo.py
